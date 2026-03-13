@@ -19,6 +19,7 @@ mac:
   category: public.app-category.productivity
 dmg:
   icon: build/icon.icns
+  format: UDBZ
   artifactName: ${name}-${version}.${ext}
 win:
   target:
