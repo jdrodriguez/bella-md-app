@@ -1,0 +1,32 @@
+appId: com.integrum.bella-md
+productName: BellaMD
+directories:
+  buildResources: build
+extraResources:
+  - from: resources/icon.png
+    to: icon.png
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.*'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!{tailwind.config.js,postcss.config.js}'
+mac:
+  target:
+    - dmg
+    - zip
+  artifactName: ${name}-${version}.${ext}
+  category: public.app-category.productivity
+dmg:
+  artifactName: ${name}-${version}.${ext}
+win:
+  target:
+    - nsis
+    - portable
+  artifactName: ${name}-${version}-setup.${ext}
+linux:
+  target:
+    - AppImage
+    - deb
+  artifactName: ${name}-${version}-${arch}.${ext}
+  category: Office
