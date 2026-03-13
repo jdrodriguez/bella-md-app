@@ -18,6 +18,7 @@ mac:
   artifactName: ${name}-${version}.${ext}
   category: public.app-category.productivity
 dmg:
+  icon: build/icon.icns
   artifactName: ${name}-${version}.${ext}
 win:
   target:
