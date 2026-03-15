@@ -1,6 +1,7 @@
 import { ipcMain, dialog, shell, BrowserWindow } from 'electron'
 import { join, basename, dirname, extname } from 'path'
 import fs from 'fs'
+import HTMLtoDOCX from 'html-to-docx'
 
 interface FileEntry {
   name: string
@@ -248,14 +249,107 @@ export function setupIPC(): void {
 
   ipcMain.handle('export-pdf', async (_event, html: string, defaultPath?: string) => {
     try {
+      const defaultName = defaultPath
+        ? basename(defaultPath, extname(defaultPath)) + '.pdf'
+        : 'document.pdf'
+
       const result = await dialog.showSaveDialog({
-        defaultPath: defaultPath || 'document.pdf',
+        defaultPath: defaultName,
         filters: [{ name: 'PDF', extensions: ['pdf'] }]
       })
 
       if (result.canceled || !result.filePath) {
         return false
       }
+
+      const styledHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1a1a1a;
+      max-width: 100%;
+      padding: 0;
+    }
+    h1, h2, h3, h4, h5, h6 { font-weight: 600; }
+    h1 { font-size: 2.25em; margin: 1em 0 0.5em; line-height: 1.2; }
+    h2 { font-size: 1.75em; margin: 0.8em 0 0.4em; line-height: 1.3; }
+    h3 { font-size: 1.375em; margin: 0.6em 0 0.3em; line-height: 1.4; }
+    h4 { font-size: 1.125em; margin: 0.5em 0 0.25em; }
+    h5 { font-size: 1em; margin: 0.5em 0 0.25em; }
+    h6 { font-size: 0.875em; margin: 0.5em 0 0.25em; text-transform: uppercase; letter-spacing: 0.05em; }
+    p { margin: 0.5em 0; }
+    a { color: #2563eb; text-decoration: underline; }
+    ul { list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0; }
+    ol { list-style-type: decimal; padding-left: 1.5em; margin: 0.5em 0; }
+    li { margin: 0.25em 0; }
+    li > p { margin: 0; }
+    /* Task lists */
+    ul[data-type="taskList"] {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul[data-type="taskList"] li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 0.35em 0;
+    }
+    ul[data-type="taskList"] li > label {
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    ul[data-type="taskList"] li > label input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #2563eb;
+    }
+    ul[data-type="taskList"] li > div {
+      flex: 1;
+      min-width: 0;
+    }
+    blockquote {
+      border-left: 3px solid #d1d5db;
+      padding-left: 1em;
+      margin: 1em 0;
+      color: #6b7280;
+      font-style: italic;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    pre code { background: none; padding: 0; border-radius: 0; font-size: inherit; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; }
+    th { background: #f9fafb; font-weight: 600; }
+    hr { border: none; border-top: 2px solid #e5e7eb; margin: 2em 0; }
+    img { max-width: 100%; height: auto; border-radius: 4px; margin: 1em 0; }
+    mark { background-color: #fef08a; padding: 1px 2px; border-radius: 2px; }
+    sup { font-size: 0.75em; }
+    sub { font-size: 0.75em; }
+  </style>
+</head>
+<body>${html}</body>
+</html>`
 
       const pdfWindow = new BrowserWindow({
         show: false,
@@ -267,7 +361,7 @@ export function setupIPC(): void {
       })
 
       await pdfWindow.loadURL(
-        `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
+        `data:text/html;charset=utf-8,${encodeURIComponent(styledHtml)}`
       )
 
       const pdfData = await pdfWindow.webContents.printToPDF({
@@ -368,6 +462,41 @@ ${content}
     }
   })
 
+  ipcMain.handle('export-docx', async (_event, html: string, defaultPath?: string) => {
+    try {
+      const defaultName = defaultPath
+        ? basename(defaultPath, extname(defaultPath)) + '.docx'
+        : 'document.docx'
+
+      const result = await dialog.showSaveDialog({
+        defaultPath: defaultName,
+        filters: [{ name: 'Word Document', extensions: ['docx'] }]
+      })
+
+      if (result.canceled || !result.filePath) {
+        return false
+      }
+
+      const htmlTemplate = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>${html}</body>
+</html>`
+
+      const docxBuffer = await HTMLtoDOCX(htmlTemplate, null, {
+        table: { row: { cantSplit: true } },
+        footer: true,
+        pageNumber: true
+      })
+
+      await fs.promises.writeFile(result.filePath, docxBuffer as Buffer)
+      return true
+    } catch (error) {
+      console.error('Failed to export DOCX:', error)
+      return false
+    }
+  })
+
   ipcMain.handle(
     'save-pasted-image',
     async (_event, imageDataUrl: string, documentPath?: string) => {
@@ -418,5 +547,31 @@ ${content}
 
   ipcMain.handle('get-basename', async (_event, filePath: string) => {
     return basename(filePath)
+  })
+
+  // License handlers
+  ipcMain.handle('license:activate', async (_event, licenseKey: string) => {
+    const { activateLicense } = await import('./license')
+    return activateLicense(licenseKey)
+  })
+
+  ipcMain.handle('license:validate', async () => {
+    const { validateLicense } = await import('./license')
+    return validateLicense()
+  })
+
+  ipcMain.handle('license:deactivate', async () => {
+    const { deactivateDevice } = await import('./license')
+    return deactivateDevice()
+  })
+
+  ipcMain.handle('license:get-key', async () => {
+    const { getStoredLicenseKey } = await import('./license')
+    return getStoredLicenseKey()
+  })
+
+  ipcMain.handle('license:get-machine-id', async () => {
+    const { getMachineId } = await import('./license')
+    return getMachineId()
   })
 }

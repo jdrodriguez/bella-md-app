@@ -50,6 +50,11 @@ export function setupMenu(mainWindow: BrowserWindow, spellcheck?: SpellcheckConf
                 click: (): void => sendMenuAction(mainWindow, 'preferences')
               },
               { type: 'separator' as const },
+              {
+                label: 'Deactivate License...',
+                click: (): void => sendMenuAction(mainWindow, 'deactivate-license')
+              },
+              { type: 'separator' as const },
               { role: 'services' as const },
               { type: 'separator' as const },
               { role: 'hide' as const },
@@ -99,6 +104,10 @@ export function setupMenu(mainWindow: BrowserWindow, spellcheck?: SpellcheckConf
         {
           label: 'Export as HTML',
           click: (): void => sendMenuAction(mainWindow, 'export-html')
+        },
+        {
+          label: 'Export as Word (.docx)',
+          click: (): void => sendMenuAction(mainWindow, 'export-docx')
         },
         { type: 'separator' },
         {
@@ -233,7 +242,22 @@ export function setupMenu(mainWindow: BrowserWindow, spellcheck?: SpellcheckConf
       label: 'Window',
       role: 'window',
       submenu: [{ role: 'minimize' }, { role: 'close' }]
-    }
+    },
+
+    // Help menu (non-macOS gets Deactivate License here)
+    ...(!isMac
+      ? [
+          {
+            label: 'Help',
+            submenu: [
+              {
+                label: 'Deactivate License...',
+                click: (): void => sendMenuAction(mainWindow, 'deactivate-license')
+              }
+            ]
+          } as MenuItemConstructorOptions
+        ]
+      : [])
   ]
 
   const menu = Menu.buildFromTemplate(template)

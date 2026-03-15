@@ -157,6 +157,27 @@ export default function App() {
           }
           break
         }
+
+        case 'export-docx': {
+          const editor = editorRef.current
+          if (editor) {
+            const html = editor.getHTML()
+            const tab = useStore.getState().getActiveTab()
+            await window.api.exportDOCX(html, tab?.filePath ?? undefined)
+          }
+          break
+        }
+
+        case 'deactivate-license': {
+          const confirmed = window.confirm(
+            'Are you sure you want to deactivate this device? You can re-activate later with your license key.'
+          )
+          if (confirmed) {
+            await window.api.deactivateLicense()
+            window.location.reload()
+          }
+          break
+        }
       }
     })
     return cleanup

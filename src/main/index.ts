@@ -6,6 +6,7 @@ import { setupMenu } from './menu'
 import { setupIPC } from './ipc'
 
 let mainWindow: BrowserWindow | null = null
+let pendingFilePath: string | null = null
 
 const prefsPath = (): string => join(app.getPath('userData'), 'preferences.json')
 
@@ -56,6 +57,20 @@ function createWindow(): BrowserWindow {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow!.show()
+
+    // Open any file that was double-clicked before the window was ready
+    if (pendingFilePath) {
+      const filePath = pendingFilePath
+      pendingFilePath = null
+      fs.promises
+        .readFile(filePath, 'utf-8')
+        .then((content) => {
+          mainWindow!.webContents.send('file-opened', filePath, content)
+        })
+        .catch(() => {
+          // File could not be read
+        })
+    }
   })
 
   const savedLang = (loadPrefs().spellcheckLang as string) || 'en-US'
@@ -116,9 +131,54 @@ function createWindow(): BrowserWindow {
   return mainWindow
 }
 
+// Single instance lock — on Windows/Linux, prevent duplicate app windows
+const gotLock = app.requestSingleInstanceLock()
+if (!gotLock) {
+  app.quit()
+}
+
+// On Windows/Linux, file paths are passed as CLI arguments
+function getFileFromArgs(argv: string[]): string | null {
+  // Skip the executable and any electron flags; look for a .md/.markdown/.txt path
+  const fileArg = argv.find((arg, i) => {
+    if (i === 0) return false // executable
+    if (arg.startsWith('-')) return false // flag
+    return /\.(md|markdown|txt)$/i.test(arg)
+  })
+  return fileArg ?? null
+}
+
 app.whenReady().then(() => {
   setupIPC()
   createWindow()
+
+  // Check CLI args on Windows/Linux for file opened via double-click
+  if (process.platform !== 'darwin') {
+    const fileFromArgs = getFileFromArgs(process.argv)
+    if (fileFromArgs) {
+      pendingFilePath = fileFromArgs
+    }
+  }
+
+  // Handle second-instance on Windows/Linux (single-instance lock)
+  app.on('second-instance', (_event, argv) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+
+      const filePath = getFileFromArgs(argv)
+      if (filePath) {
+        fs.promises
+          .readFile(filePath, 'utf-8')
+          .then((content) => {
+            mainWindow!.webContents.send('file-opened', filePath, content)
+          })
+          .catch(() => {
+            // File could not be read
+          })
+      }
+    }
+  })
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -127,9 +187,10 @@ app.whenReady().then(() => {
   })
 })
 
-app.on('open-file', (_event, filePath) => {
-  _event.preventDefault()
-  if (mainWindow) {
+app.on('open-file', (event, filePath) => {
+  event.preventDefault()
+
+  if (mainWindow && mainWindow.webContents) {
     fs.promises
       .readFile(filePath, 'utf-8')
       .then((content) => {
@@ -138,6 +199,9 @@ app.on('open-file', (_event, filePath) => {
       .catch(() => {
         // File could not be read
       })
+  } else {
+    // App launched by double-clicking a file — window not ready yet
+    pendingFilePath = filePath
   }
 })
 

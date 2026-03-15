@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('export-pdf', html, defaultPath),
   exportHTML: (content: string, defaultPath?: string) =>
     ipcRenderer.invoke('export-html', content, defaultPath),
+  exportDOCX: (html: string, defaultPath?: string) =>
+    ipcRenderer.invoke('export-docx', html, defaultPath),
   savePastedImage: (imageDataUrl: string, documentPath?: string) =>
     ipcRenderer.invoke('save-pasted-image', imageDataUrl, documentPath),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
@@ -36,5 +38,12 @@ contextBridge.exposeInMainWorld('api', {
     const handler = (_event: unknown, dirPath: string): void => callback(dirPath)
     ipcRenderer.on('directory-changed', handler)
     return () => ipcRenderer.removeListener('directory-changed', handler)
-  }
+  },
+
+  // License
+  activateLicense: (licenseKey: string) => ipcRenderer.invoke('license:activate', licenseKey),
+  validateLicense: () => ipcRenderer.invoke('license:validate'),
+  deactivateLicense: () => ipcRenderer.invoke('license:deactivate'),
+  getLicenseKey: () => ipcRenderer.invoke('license:get-key'),
+  getMachineId: () => ipcRenderer.invoke('license:get-machine-id')
 })
