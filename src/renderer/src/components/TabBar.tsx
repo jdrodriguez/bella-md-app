@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { X, Plus, FileText, PanelRightClose } from 'lucide-react'
+import { X, Plus, FileText } from 'lucide-react'
 import { useStore } from '../store'
 
 export default function TabBar() {
@@ -8,8 +8,6 @@ export default function TabBar() {
   const setActiveTab = useStore((s) => s.setActiveTab)
   const closeTab = useStore((s) => s.closeTab)
   const newTab = useStore((s) => s.newTab)
-  const toggleTabPanel = useStore((s) => s.toggleTabPanel)
-
   const handleClose = useCallback(
     (e: React.MouseEvent, id: string) => {
       e.stopPropagation()
@@ -25,22 +23,13 @@ export default function TabBar() {
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Open Tabs
         </span>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={newTab}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
-            title="New Tab"
-          >
-            <Plus size={14} />
-          </button>
-          <button
-            onClick={toggleTabPanel}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
-            title="Close Panel"
-          >
-            <PanelRightClose size={14} />
-          </button>
-        </div>
+        <button
+          onClick={newTab}
+          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+          title="New Tab"
+        >
+          <Plus size={14} />
+        </button>
       </div>
 
       {/* Tab list */}
