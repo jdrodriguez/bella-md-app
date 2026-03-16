@@ -230,7 +230,7 @@ export default function DemoEditor() {
                         ? "#6b7280"
                         : "#9ca3af",
                     borderLeft: isActive
-                      ? `2px solid ${darkMode ? "#38bcd8" : "#0ea5c2"}`
+                      ? `2px solid ${darkMode ? "#38bdf8" : "#0EA5E9"}`
                       : "2px solid transparent",
                   }}
                 >

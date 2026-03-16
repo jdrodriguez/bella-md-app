@@ -56,7 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="${url}" style="display: inline-block; padding: 12px 32px; background-color: #0ea5c2; color: #ffffff; font-size: 15px; font-weight: 500; text-decoration: none; border-radius: 8px;">
+                    <a href="${url}" style="display: inline-block; padding: 12px 32px; background-color: #0EA5E9; color: #ffffff; font-size: 15px; font-weight: 500; text-decoration: none; border-radius: 8px;">
                       Sign in
                     </a>
                   </td>
