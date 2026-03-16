@@ -25,6 +25,7 @@ const platforms = [
     altHref: `${RELEASE_BASE}/bella-md-1.0.0-arm64-setup.exe`,
     altLabel: "ARM64",
     requirements: "Windows 10 or later",
+    note: 'Windows may show a "Windows protected your PC" warning. Click "More info" then "Run anyway" to install.',
     comingSoon: false,
     icon: (
       <svg
@@ -114,6 +115,11 @@ export default function DownloadPage() {
                     >
                       {platform.altLabel} version
                     </a>
+                  )}
+                  {platform.note && (
+                    <p className="mt-2 text-[11px] leading-tight text-zinc-400 dark:text-zinc-500">
+                      {platform.note}
+                    </p>
                   )}
                 </div>
               )}
