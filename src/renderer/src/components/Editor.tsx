@@ -7,6 +7,7 @@ import FindReplace from './FindReplace'
 import BubbleMenuBar from './BubbleMenuBar'
 import SlashCommandMenu from './SlashCommandMenu'
 import TableMenu from './TableMenu'
+import TableControls from './TableControls'
 import { useStore } from '../store'
 
 interface EditorProps {
@@ -180,6 +181,7 @@ export default function Editor({ content, onUpdate, onEditorInstance, className 
         <BubbleMenuBar editor={editor} />
         <SlashCommandMenu editor={editor} />
         <TableMenu editor={editor} />
+        <TableControls editor={editor} />
       </div>
     </div>
   )
