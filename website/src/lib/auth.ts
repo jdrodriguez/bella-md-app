@@ -20,10 +20,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   providers: [
     Resend({
-      from: "BellaMD <noreply@bellamarkdown.com>",
+      from: "BellaMD <hello@bellamarkdown.com>",
       async sendVerificationRequest({ identifier: email, url }) {
         await getResend().emails.send({
-          from: "BellaMD <noreply@bellamarkdown.com>",
+          from: "BellaMD <hello@bellamarkdown.com>",
           to: email,
           subject: "Sign in to BellaMD",
           html: `
