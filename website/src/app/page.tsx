@@ -161,24 +161,24 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Interactive app demo */}
-          <div className="relative mx-auto mt-16 max-w-5xl sm:mt-20">
-            {/* Gradient glow behind demo */}
-            <div
-              className="absolute -inset-8 rounded-3xl opacity-15 blur-3xl sm:-inset-12"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(99, 102, 241, 0.4), rgba(79, 70, 229, 0.2) 40%, transparent 70%)",
-              }}
-            />
-            <div className="relative">
-              <DemoEditorLoader />
-              <p className="mt-3 text-center text-sm text-muted-foreground">
-                This is a fully interactive demo — try editing, formatting, and switching documents
-              </p>
-            </div>
-          </div>
+      {/* Interactive app demo — full width */}
+      <section className="relative w-full px-4 pb-20 sm:px-6">
+        {/* Gradient glow behind demo */}
+        <div
+          className="absolute inset-x-0 -top-20 bottom-0 opacity-10"
+          style={{
+            background:
+              "radial-gradient(ellipse at center top, rgba(99, 102, 241, 0.5), transparent 60%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-[1400px]">
+          <DemoEditorLoader />
+          <p className="mt-3 text-center text-sm text-muted-foreground">
+            Fully interactive demo — try editing, formatting, and switching documents
+          </p>
         </div>
       </section>
 
