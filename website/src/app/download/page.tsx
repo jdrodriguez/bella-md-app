@@ -1,11 +1,13 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
+const RELEASE_BASE = "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0"
+
 const platforms = [
   {
     name: "macOS",
-    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0.dmg",
-    requirements: "macOS 12 Monterey or later",
+    href: `${RELEASE_BASE}/bella-md-1.0.0.dmg`,
+    requirements: "macOS 12 Monterey or later (Apple Silicon)",
     comingSoon: false,
     icon: (
       <svg
@@ -19,8 +21,10 @@ const platforms = [
   },
   {
     name: "Windows",
-    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0-setup.exe",
-    requirements: "Windows 10 or later (64-bit)",
+    href: `${RELEASE_BASE}/bella-md-1.0.0-x64-setup.exe`,
+    altHref: `${RELEASE_BASE}/bella-md-1.0.0-setup.exe`,
+    altLabel: "ARM64",
+    requirements: "Windows 10 or later",
     comingSoon: false,
     icon: (
       <svg
@@ -34,7 +38,9 @@ const platforms = [
   },
   {
     name: "Linux",
-    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0-arm64.AppImage",
+    href: `${RELEASE_BASE}/bella-md-1.0.0-x86_64.AppImage`,
+    altHref: `${RELEASE_BASE}/bella-md-1.0.0-arm64.AppImage`,
+    altLabel: "ARM64",
     requirements: "Ubuntu 20.04+, Fedora 36+, or equivalent (AppImage)",
     comingSoon: false,
     icon: (
@@ -94,12 +100,22 @@ export default function DownloadPage() {
                   </span>
                 </div>
               ) : (
-                <a
-                  href={platform.href}
-                  className="mt-6 flex min-h-[44px] w-full items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
-                >
-                  Download
-                </a>
+                <div className="mt-6 flex w-full flex-col items-center gap-2">
+                  <a
+                    href={platform.href}
+                    className="flex min-h-[44px] w-full items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+                  >
+                    Download{platform.altHref ? " (x64)" : ""}
+                  </a>
+                  {platform.altHref && (
+                    <a
+                      href={platform.altHref}
+                      className="text-xs font-medium text-accent underline underline-offset-4 hover:opacity-80"
+                    >
+                      {platform.altLabel} version
+                    </a>
+                  )}
+                </div>
               )}
             </div>
           ))}
