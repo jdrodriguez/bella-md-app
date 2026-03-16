@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${request.nextUrl.origin}/account?success=true`,
-      cancel_url: `${request.nextUrl.origin}/pricing`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/account?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/pricing`,
     })
 
     return NextResponse.json({ url: checkoutSession.url })
