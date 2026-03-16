@@ -4,7 +4,12 @@ import { licenses, activations } from '@/db/schema'
 import { eq, and, isNull } from 'drizzle-orm'
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
   const { licenseKey, machineId } = body
 
   if (!licenseKey || !machineId) {

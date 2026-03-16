@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyLicenseKey } from '@/lib/license'
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
   const { licenseKey } = body
 
   if (!licenseKey) {

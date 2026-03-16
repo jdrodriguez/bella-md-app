@@ -20,12 +20,12 @@ export function Footer() {
           >
             Terms
           </Link>
-          <Link
-            href="/contact"
+          <a
+            href="mailto:support@bellamarkdown.com"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Contact
-          </Link>
+          </a>
         </nav>
       </div>
     </footer>

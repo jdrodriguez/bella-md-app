@@ -21,7 +21,7 @@ export function Header() {
 
         <nav className="hidden items-center gap-1 sm:flex">
           <Link
-            href="#features"
+            href="/#features"
             className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Features
@@ -86,7 +86,7 @@ function MobileNav() {
         </summary>
         <div className="absolute right-0 top-full mt-2 w-48 rounded-lg border border-border bg-background p-2 shadow-lg">
           <Link
-            href="#features"
+            href="/#features"
             className="block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             Features

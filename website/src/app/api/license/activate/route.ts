@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db'
 import { activations } from '@/db/schema'
-import { eq, and, isNull } from 'drizzle-orm'
+import { eq, and, isNull, isNotNull } from 'drizzle-orm'
 import { SignJWT } from 'jose'
 import { verifyLicenseKey } from '@/lib/license'
 
 const secret = new TextEncoder().encode(process.env.AUTH_SECRET)
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
   const { licenseKey, machineId, machineName, os } = body
 
   if (!licenseKey || !machineId) {
@@ -73,16 +78,42 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Create new activation
-  const [activation] = await db
-    .insert(activations)
-    .values({
-      licenseId: license.id,
-      machineId,
-      machineName: machineName ?? null,
-      os: os ?? null,
-    })
-    .returning()
+  // Check for a previously deactivated activation for this machine
+  const deactivated = await db.query.activations.findFirst({
+    where: and(
+      eq(activations.licenseId, license.id),
+      eq(activations.machineId, machineId),
+      isNotNull(activations.deactivatedAt),
+    ),
+  })
+
+  let activation
+  if (deactivated) {
+    // Re-activate existing row to avoid unique constraint violation
+    const [reactivated] = await db
+      .update(activations)
+      .set({
+        deactivatedAt: null,
+        lastHeartbeatAt: new Date(),
+        machineName: machineName ?? deactivated.machineName,
+        os: os ?? deactivated.os,
+      })
+      .where(eq(activations.id, deactivated.id))
+      .returning()
+    activation = reactivated
+  } else {
+    // Create new activation
+    const [created] = await db
+      .insert(activations)
+      .values({
+        licenseId: license.id,
+        machineId,
+        machineName: machineName ?? null,
+        os: os ?? null,
+      })
+      .returning()
+    activation = created
+  }
 
   const token = await new SignJWT({
     licenseId: license.id,

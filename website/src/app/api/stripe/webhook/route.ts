@@ -46,6 +46,12 @@ export async function POST(request: NextRequest) {
           break
         }
 
+        // Idempotency: skip if this user already has a license
+        const existingLicense = await db.query.licenses.findFirst({
+          where: eq(licenses.userId, userId),
+        })
+        if (existingLicense) break
+
         const expiresAt = new Date()
         expiresAt.setFullYear(expiresAt.getFullYear() + 1)
 

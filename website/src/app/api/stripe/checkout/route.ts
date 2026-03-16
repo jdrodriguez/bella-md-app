@@ -12,10 +12,17 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  if (!session.user.email) {
+    return NextResponse.json(
+      { error: 'No email on session' },
+      { status: 400 },
+    )
+  }
+
   try {
     const checkoutSession = await getStripe().checkout.sessions.create({
       mode: 'subscription',
-      customer_email: session.user.email!,
+      customer_email: session.user.email,
       metadata: {
         userId: session.user.id,
       },

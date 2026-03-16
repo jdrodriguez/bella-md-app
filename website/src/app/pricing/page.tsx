@@ -1,3 +1,5 @@
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { CheckoutButton } from "./checkout-button"
 
 const features = [
@@ -35,8 +37,9 @@ const faqs = [
 
 export default function PricingPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-zinc-50 px-4 py-24 dark:bg-black">
-      {/* Header */}
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
+      <Header />
+      <div className="flex flex-1 flex-col items-center px-4 py-24">
       <div className="w-full max-w-2xl text-center">
         <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50">
           Simple, transparent pricing
@@ -113,6 +116,8 @@ export default function PricingPage() {
           ))}
         </dl>
       </div>
+      </div>
+      <Footer />
     </div>
   )
 }
