@@ -5,7 +5,6 @@ import { getExtensions } from '../lib/extensions'
 import Toolbar from './Toolbar'
 import FindReplace from './FindReplace'
 import BubbleMenuBar from './BubbleMenuBar'
-import SlashCommandMenu from './SlashCommandMenu'
 import TableMenu from './TableMenu'
 import TableControls from './TableControls'
 import TableToolbar from './TableToolbar'
@@ -181,7 +180,6 @@ export default function Editor({ content, onUpdate, onEditorInstance, className 
       <div className="flex-1 overflow-y-auto">
         <EditorContent editor={editor} className={className} />
         <BubbleMenuBar editor={editor} />
-        <SlashCommandMenu editor={editor} />
         <TableMenu editor={editor} />
         <TableControls editor={editor} />
       </div>
