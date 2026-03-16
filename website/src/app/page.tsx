@@ -86,9 +86,9 @@ const features = [
     ),
   },
   {
-    title: "PDF & HTML Export",
+    title: "PDF, HTML & Word Export",
     description:
-      "Export your documents to PDF or HTML with a single click.",
+      "Export your documents to PDF, HTML, or Word (.docx) with a single click.",
     icon: (
       <svg
         className="h-6 w-6"

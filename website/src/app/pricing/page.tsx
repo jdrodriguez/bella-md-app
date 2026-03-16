@@ -6,7 +6,7 @@ const features = [
   "WYSIWYG Markdown editing",
   "Dark mode",
   "Multi-tab documents",
-  "PDF & HTML export",
+  "PDF, HTML & Word export",
   "Find & Replace",
   "Up to 3 devices",
   "All future updates",
