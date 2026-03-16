@@ -162,7 +162,7 @@ app.whenReady().then(() => {
 
   // Handle second-instance on Windows/Linux (single-instance lock)
   app.on('second-instance', (_event, argv) => {
-    if (mainWindow) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
 
@@ -171,7 +171,9 @@ app.whenReady().then(() => {
         fs.promises
           .readFile(filePath, 'utf-8')
           .then((content) => {
-            mainWindow!.webContents.send('file-opened', filePath, content)
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              mainWindow.webContents.send('file-opened', filePath, content)
+            }
           })
           .catch(() => {
             // File could not be read
@@ -190,11 +192,13 @@ app.whenReady().then(() => {
 app.on('open-file', (event, filePath) => {
   event.preventDefault()
 
-  if (mainWindow && mainWindow.webContents) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
     fs.promises
       .readFile(filePath, 'utf-8')
       .then((content) => {
-        mainWindow!.webContents.send('file-opened', filePath, content)
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('file-opened', filePath, content)
+        }
       })
       .catch(() => {
         // File could not be read
