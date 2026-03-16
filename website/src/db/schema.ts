@@ -13,7 +13,7 @@ import { relations } from 'drizzle-orm'
 // Auth.js tables (required by @auth/drizzle-adapter)
 // ---------------------------------------------------------------------------
 
-export const users = pgTable('users', {
+export const users = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name'),
   email: text('email').notNull().unique(),
@@ -22,7 +22,7 @@ export const users = pgTable('users', {
   createdAt: timestamp('createdAt', { mode: 'date' }).defaultNow(),
 })
 
-export const accounts = pgTable('accounts', {
+export const accounts = pgTable('account', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('userId')
     .notNull()
@@ -39,7 +39,7 @@ export const accounts = pgTable('accounts', {
   session_state: text('session_state'),
 })
 
-export const sessions = pgTable('sessions', {
+export const sessions = pgTable('session', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionToken: text('sessionToken').notNull().unique(),
   userId: uuid('userId')
@@ -49,7 +49,7 @@ export const sessions = pgTable('sessions', {
 })
 
 export const verificationTokens = pgTable(
-  'verificationTokens',
+  'verificationToken',
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull().unique(),
