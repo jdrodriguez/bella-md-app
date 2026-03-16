@@ -8,6 +8,7 @@ import BubbleMenuBar from './BubbleMenuBar'
 import SlashCommandMenu from './SlashCommandMenu'
 import TableMenu from './TableMenu'
 import TableControls from './TableControls'
+import TableToolbar from './TableToolbar'
 import { useStore } from '../store'
 
 interface EditorProps {
@@ -173,6 +174,7 @@ export default function Editor({ content, onUpdate, onEditorInstance, className 
   return (
     <div className="flex flex-col h-full">
       <Toolbar editor={editor} />
+      <TableToolbar editor={editor} />
       {showFindReplace && (
         <FindReplace editor={editor} onClose={() => setShowFindReplace(false)} />
       )}
