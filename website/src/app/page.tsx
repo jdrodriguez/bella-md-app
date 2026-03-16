@@ -132,53 +132,36 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
+      {/* Hero — interactive demo */}
+      <section className="relative w-full px-4 pt-8 pb-16 sm:px-6 sm:pt-12 sm:pb-20">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-32 lg:pt-40">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Markdown editing,
-              <br />
-              beautifully simple.
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl">
-              A distraction-free WYSIWYG editor that gets out of your way.
-              Write, format, and export — all from a clean, native desktop app.
-            </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link
-                href="/pricing"
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-accent px-6 py-3 text-base font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/90 sm:w-auto"
-              >
-                Start writing
-              </Link>
-              <Link
-                href="/download"
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-border px-6 py-3 text-base font-medium text-foreground transition-colors hover:bg-muted sm:w-auto"
-              >
-                Download
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Interactive app demo — full width */}
-      <section className="relative w-full px-4 pb-20 sm:px-6">
-        {/* Gradient glow behind demo */}
-        <div
-          className="absolute inset-x-0 -top-20 bottom-0 opacity-10"
-          style={{
-            background:
-              "radial-gradient(ellipse at center top, rgba(99, 102, 241, 0.5), transparent 60%)",
-          }}
-        />
+        <div className="relative mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            Markdown editing, beautifully simple.
+          </h1>
+          <p className="mt-3 text-base text-muted-foreground sm:text-lg">
+            Try it right here — this is the real editor.
+          </p>
+        </div>
+
         <div className="relative mx-auto max-w-[1400px]">
           <DemoEditorLoader />
-          <p className="mt-3 text-center text-sm text-muted-foreground">
-            Fully interactive demo — try editing, formatting, and switching documents
-          </p>
+        </div>
+
+        <div className="relative mx-auto mt-8 flex flex-col items-center gap-4 sm:mt-10 sm:flex-row sm:justify-center">
+          <Link
+            href="/pricing"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-accent px-8 py-3 text-base font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/90 sm:w-auto"
+          >
+            Get BellaMD — $25/year
+          </Link>
+          <Link
+            href="/download"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-border px-8 py-3 text-base font-medium text-foreground transition-colors hover:bg-muted sm:w-auto"
+          >
+            Download for macOS
+          </Link>
         </div>
       </section>
 

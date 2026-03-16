@@ -91,7 +91,7 @@ export default function DemoEditor() {
     <div
       className={`${darkMode ? "demo-dark" : ""} rounded-xl border overflow-hidden shadow-2xl`}
       style={{
-        height: 600,
+        height: 720,
         borderColor: darkMode ? "rgba(255,255,255,0.08)" : "#e5e7eb",
       }}
     >
