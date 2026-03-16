@@ -19,9 +19,9 @@ const platforms = [
   },
   {
     name: "Windows",
-    href: "#windows",
+    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0-setup.exe",
     requirements: "Windows 10 or later (64-bit)",
-    comingSoon: true,
+    comingSoon: false,
     icon: (
       <svg
         className="h-10 w-10"
@@ -34,9 +34,9 @@ const platforms = [
   },
   {
     name: "Linux",
-    href: "#linux",
-    requirements: "Ubuntu 20.04+, Fedora 36+, or equivalent",
-    comingSoon: true,
+    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0-arm64.AppImage",
+    requirements: "Ubuntu 20.04+, Fedora 36+, or equivalent (AppImage)",
+    comingSoon: false,
     icon: (
       <svg
         className="h-10 w-10"

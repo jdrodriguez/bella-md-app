@@ -2,6 +2,10 @@
   "name": "bella-md",
   "version": "1.0.0",
   "description": "BellaMD — A modern WYSIWYG Markdown document editor",
+  "author": {
+    "name": "Integrum",
+    "email": "support@bellamarkdown.com"
+  },
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
