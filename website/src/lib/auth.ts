@@ -4,7 +4,13 @@ import Resend from "next-auth/providers/resend"
 import { Resend as ResendClient } from "resend"
 import { db } from "@/db"
 
-const resend = new ResendClient(process.env.AUTH_RESEND_KEY!)
+let _resend: ResendClient | null = null
+function getResend() {
+  if (!_resend) {
+    _resend = new ResendClient(process.env.AUTH_RESEND_KEY!)
+  }
+  return _resend
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -16,7 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Resend({
       from: "BellaMD <noreply@bellamarkdown.com>",
       async sendVerificationRequest({ identifier: email, url }) {
-        await resend.emails.send({
+        await getResend().emails.send({
           from: "BellaMD <noreply@bellamarkdown.com>",
           to: email,
           subject: "Sign in to BellaMD",
