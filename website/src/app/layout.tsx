@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   title: "BellaMD — Beautiful Markdown Editing",
   description:
     "A distraction-free WYSIWYG Markdown editor for macOS, Windows, and Linux. $25/year.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({

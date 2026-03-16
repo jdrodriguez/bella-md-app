@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Header() {
   return (
@@ -6,8 +7,15 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight text-foreground"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground"
         >
+          <Image
+            src="/icon.png"
+            alt="BellaMD icon"
+            width={24}
+            height={24}
+            className="rounded-md"
+          />
           BellaMD
         </Link>
 

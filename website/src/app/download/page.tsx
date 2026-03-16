@@ -1,8 +1,12 @@
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+
 const platforms = [
   {
     name: "macOS",
-    href: "#macos",
+    href: "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.0/bella-md-1.0.0.dmg",
     requirements: "macOS 12 Monterey or later",
+    comingSoon: false,
     icon: (
       <svg
         className="h-10 w-10"
@@ -17,6 +21,7 @@ const platforms = [
     name: "Windows",
     href: "#windows",
     requirements: "Windows 10 or later (64-bit)",
+    comingSoon: true,
     icon: (
       <svg
         className="h-10 w-10"
@@ -31,6 +36,7 @@ const platforms = [
     name: "Linux",
     href: "#linux",
     requirements: "Ubuntu 20.04+, Fedora 36+, or equivalent",
+    comingSoon: true,
     icon: (
       <svg
         className="h-10 w-10"
@@ -45,55 +51,75 @@ const platforms = [
 
 export default function DownloadPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-zinc-50 px-4 py-24 dark:bg-black">
-      {/* Header */}
-      <div className="w-full max-w-2xl text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50">
-          Download BellaMD
-        </h1>
-        <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-          Available for macOS, Windows, and Linux.
-        </p>
-      </div>
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
+      <Header />
 
-      {/* Platform Cards */}
-      <div className="mt-16 grid w-full max-w-3xl grid-cols-1 gap-6 sm:grid-cols-3">
-        {platforms.map((platform) => (
-          <div
-            key={platform.name}
-            className="flex flex-col items-center rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-          >
-            <div className="text-zinc-700 dark:text-zinc-300">
-              {platform.icon}
-            </div>
-            <h2 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              {platform.name}
-            </h2>
-            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-              {platform.requirements}
-            </p>
-            <a
-              href={platform.href}
-              className="mt-6 flex min-h-[44px] w-full items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+      <main className="flex flex-1 flex-col items-center px-4 py-24">
+        {/* Header */}
+        <div className="w-full max-w-2xl text-center">
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50">
+            Download BellaMD
+          </h1>
+          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+            Available for macOS, Windows, and Linux.
+          </p>
+        </div>
+
+        {/* Platform Cards */}
+        <div className="mt-16 grid w-full max-w-3xl grid-cols-1 gap-6 sm:grid-cols-3">
+          {platforms.map((platform) => (
+            <div
+              key={platform.name}
+              className="flex flex-col items-center rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
             >
-              Download
-            </a>
-          </div>
-        ))}
-      </div>
+              <div className={platform.comingSoon ? "text-zinc-400 dark:text-zinc-600" : "text-zinc-700 dark:text-zinc-300"}>
+                {platform.icon}
+              </div>
+              <h2 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+                {platform.name}
+              </h2>
+              <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                {platform.requirements}
+              </p>
+              {platform.comingSoon ? (
+                <div className="mt-6 flex w-full flex-col items-center gap-2">
+                  <span
+                    className="flex min-h-[44px] w-full cursor-not-allowed items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
+                    aria-disabled="true"
+                  >
+                    Download
+                  </span>
+                  <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
+                    Coming soon
+                  </span>
+                </div>
+              ) : (
+                <a
+                  href={platform.href}
+                  className="mt-6 flex min-h-[44px] w-full items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+                >
+                  Download
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
 
-      {/* License Note */}
-      <div className="mt-16 w-full max-w-2xl text-center">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          You&apos;ll need a license key to activate BellaMD. Don&apos;t have one?{" "}
-          <a
-            href="/pricing"
-            className="font-medium text-accent underline underline-offset-4 hover:opacity-80"
-          >
-            Get started
-          </a>
-        </p>
-      </div>
+        {/* License Note */}
+        <div className="mt-16 w-full max-w-2xl text-center">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            You&apos;ll need a license key to activate BellaMD. Don&apos;t have one?{" "}
+            <a
+              href="/pricing"
+              className="font-medium text-accent underline underline-offset-4 hover:opacity-80"
+            >
+              Get started
+            </a>
+          </p>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }

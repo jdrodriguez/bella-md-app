@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
@@ -6,7 +7,7 @@ const features = [
   {
     title: "WYSIWYG Editing",
     description:
-      "Write in a rich editor that renders Markdown as you type. No split panes, no preview toggle.",
+      "Write in a rich editor that renders Markdown as you type.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -26,7 +27,7 @@ const features = [
   {
     title: "Dark Mode",
     description:
-      "A carefully tuned dark theme that is easy on the eyes during late-night writing sessions.",
+      "A carefully tuned dark theme for late-night writing sessions.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -46,7 +47,7 @@ const features = [
   {
     title: "Multi-Tab Documents",
     description:
-      "Work on multiple files at once. Switch between documents with tabs, just like your browser.",
+      "Work on multiple files at once with a familiar tabbed interface.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -66,7 +67,7 @@ const features = [
   {
     title: "Find & Replace",
     description:
-      "Quickly locate and replace text across your document with a fast, keyboard-driven search.",
+      "Locate and replace text with a fast, keyboard-driven search.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -86,7 +87,7 @@ const features = [
   {
     title: "PDF & HTML Export",
     description:
-      "Export your documents to PDF or HTML with a single click. Share your writing anywhere.",
+      "Export your documents to PDF or HTML with a single click.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -106,7 +107,7 @@ const features = [
   {
     title: "Syntax Highlighting",
     description:
-      "Fenced code blocks are highlighted automatically. Supports dozens of languages out of the box.",
+      "Fenced code blocks highlighted for dozens of languages.",
     icon: (
       <svg
         className="h-6 w-6"
@@ -125,6 +126,128 @@ const features = [
   },
 ];
 
+function EditorMockup({ variant = "light" }: { variant?: "light" | "dark" }) {
+  const isDark = variant === "dark";
+
+  const chromeBg = isDark ? "bg-[#1e1e2e]" : "bg-[#e8e8ec]";
+  const sidebarBg = isDark ? "bg-[#111827]" : "bg-gray-900";
+  const sidebarText = "text-gray-400";
+  const sidebarActiveText = isDark ? "text-gray-100" : "text-white";
+  const sidebarActiveBg = isDark ? "bg-white/10" : "bg-white/10";
+  const editorBg = isDark ? "bg-[#1a1a2e]" : "bg-white";
+  const editorText = isDark ? "text-gray-200" : "text-gray-800";
+  const editorMuted = isDark ? "text-gray-500" : "text-gray-400";
+  const tabBg = isDark ? "bg-[#1a1a2e]" : "bg-white";
+  const tabInactiveBg = isDark ? "bg-[#151525]" : "bg-gray-100";
+  const tabText = isDark ? "text-gray-300" : "text-gray-700";
+  const tabInactiveText = isDark ? "text-gray-500" : "text-gray-400";
+  const tabBarBg = isDark ? "bg-[#111120]" : "bg-gray-50";
+  const codeBg = isDark ? "bg-[#111120]" : "bg-gray-50";
+  const codeText = isDark ? "text-emerald-400" : "text-emerald-600";
+  const borderColor = isDark ? "border-white/5" : "border-gray-200";
+  const bulletColor = isDark ? "text-indigo-400" : "text-indigo-500";
+  const headingText = isDark ? "text-gray-100" : "text-gray-900";
+
+  return (
+    <div className={`overflow-hidden rounded-xl border ${borderColor} shadow-2xl`}>
+      {/* Window chrome */}
+      <div className={`flex items-center gap-2 px-4 py-2.5 ${chromeBg}`}>
+        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+        <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+        <span className={`ml-3 text-xs font-medium ${isDark ? "text-gray-500" : "text-gray-500"}`}>
+          BellaMD
+        </span>
+      </div>
+
+      {/* Tab bar */}
+      <div className={`flex items-end gap-0 ${tabBarBg} px-2 pt-1`}>
+        <div className={`rounded-t-md ${tabBg} px-4 py-1.5 text-xs font-medium ${tabText} border-x border-t ${borderColor}`}>
+          README.md
+        </div>
+        <div className={`rounded-t-md ${tabInactiveBg} px-4 py-1.5 text-xs ${tabInactiveText}`}>
+          Notes.md
+        </div>
+        <div className={`rounded-t-md ${tabInactiveBg} px-4 py-1.5 text-xs ${tabInactiveText}`}>
+          Blog Draft.md
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div className="flex" style={{ minHeight: "260px" }}>
+        {/* Sidebar */}
+        <div className={`w-40 shrink-0 ${sidebarBg} px-2 py-3 sm:w-44`}>
+          <div className={`mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider ${sidebarText}`}>
+            Files
+          </div>
+          <div className={`rounded-md ${sidebarActiveBg} px-2 py-1 text-xs font-medium ${sidebarActiveText}`}>
+            README.md
+          </div>
+          <div className={`px-2 py-1 text-xs ${sidebarText}`}>
+            Notes.md
+          </div>
+          <div className={`px-2 py-1 text-xs ${sidebarText}`}>
+            Blog Draft.md
+          </div>
+          <div className={`px-2 py-1 text-xs ${sidebarText}`}>
+            changelog.md
+          </div>
+          <div className={`mt-3 mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider ${sidebarText}`}>
+            Images
+          </div>
+          <div className={`px-2 py-1 text-xs ${sidebarText}`}>
+            screenshot.png
+          </div>
+          <div className={`px-2 py-1 text-xs ${sidebarText}`}>
+            logo.svg
+          </div>
+        </div>
+
+        {/* Editor area */}
+        <div className={`flex-1 ${editorBg} px-6 py-4 sm:px-8`}>
+          <h2 className={`text-lg font-bold ${headingText}`}>
+            Getting Started
+          </h2>
+          <p className={`mt-3 text-sm leading-relaxed ${editorText}`}>
+            BellaMD is a distraction-free Markdown editor built for speed and simplicity. Open any{" "}
+            <span className={`rounded px-1 py-0.5 text-xs font-mono ${codeBg} ${codeText}`}>.md</span>{" "}
+            file and start writing immediately.
+          </p>
+          <ul className={`mt-3 space-y-1 text-sm ${editorText}`}>
+            <li className="flex items-start gap-2">
+              <span className={`mt-0.5 ${bulletColor}`}>&bull;</span>
+              WYSIWYG editing with live preview
+            </li>
+            <li className="flex items-start gap-2">
+              <span className={`mt-0.5 ${bulletColor}`}>&bull;</span>
+              Export to PDF and HTML
+            </li>
+            <li className="flex items-start gap-2">
+              <span className={`mt-0.5 ${bulletColor}`}>&bull;</span>
+              Syntax highlighting for code blocks
+            </li>
+          </ul>
+          <div className={`mt-4 overflow-hidden rounded-md ${codeBg} p-3`}>
+            <div className={`text-[10px] uppercase tracking-wider ${editorMuted} mb-1`}>
+              javascript
+            </div>
+            <pre className={`text-xs font-mono ${codeText}`}>
+{`const greeting = "Hello";
+console.log(greeting);`}
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      {/* Status bar */}
+      <div className={`flex items-center justify-between border-t ${borderColor} ${isDark ? "bg-[#111120]" : "bg-gray-50"} px-4 py-1`}>
+        <span className={`text-[10px] ${editorMuted}`}>README.md</span>
+        <span className={`text-[10px] ${editorMuted}`}>234 words</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +256,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-24 sm:px-6 sm:pb-28 sm:pt-32 lg:pt-40">
+        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-32 lg:pt-40">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Markdown editing,
@@ -152,11 +275,29 @@ export default function Home() {
                 Start writing
               </Link>
               <Link
-                href="#features"
+                href="/download"
                 className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-border px-6 py-3 text-base font-medium text-foreground transition-colors hover:bg-muted sm:w-auto"
               >
-                See features
+                Download
               </Link>
+            </div>
+          </div>
+
+          {/* App preview mockup */}
+          <div className="relative mx-auto mt-16 max-w-4xl sm:mt-20">
+            {/* Gradient glow behind mockup */}
+            <div
+              className="absolute -inset-8 rounded-3xl opacity-20 blur-3xl sm:-inset-12"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(99, 102, 241, 0.4), rgba(79, 70, 229, 0.2) 40%, transparent 70%)",
+              }}
+            />
+            {/* Mockup with perspective on desktop, flat on mobile */}
+            <div
+              className="relative shadow-2xl shadow-accent/10 rounded-xl md:[transform:perspective(2000px)_rotateX(2deg)]"
+            >
+              <EditorMockup variant="light" />
             </div>
           </div>
         </div>
@@ -174,9 +315,12 @@ export default function Home() {
               the complexity.
             </p>
           </div>
-          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
-              <div key={feature.title} className="rounded-xl border border-border bg-background p-6">
+              <div
+                key={feature.title}
+                className="group rounded-xl border border-border bg-background p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/5"
+              >
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                   {feature.icon}
                 </div>
@@ -192,6 +336,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* App Preview: Light and Dark */}
+      <section className="border-t border-border">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              See it in action
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Carefully tuned light and dark themes
+            </p>
+          </div>
+          <div className="mt-14 grid gap-8 md:grid-cols-2">
+            <div>
+              <EditorMockup variant="light" />
+              <p className="mt-3 text-center text-sm font-medium text-muted-foreground">
+                Light mode
+              </p>
+            </div>
+            <div>
+              <EditorMockup variant="dark" />
+              <p className="mt-3 text-center text-sm font-medium text-muted-foreground">
+                Dark mode
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Teaser */}
       <section className="border-t border-border">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
@@ -199,11 +371,20 @@ export default function Home() {
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Simple, transparent pricing
             </h2>
-            <div className="mt-8">
-              <span className="text-5xl font-bold tracking-tight text-foreground">
-                $25
-              </span>
-              <span className="ml-1 text-lg text-muted-foreground">/year</span>
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <Image
+                src="/icon.png"
+                alt="BellaMD icon"
+                width={48}
+                height={48}
+                className="rounded-xl"
+              />
+              <div className="text-left">
+                <span className="text-5xl font-bold tracking-tight text-foreground">
+                  $25
+                </span>
+                <span className="ml-1 text-lg text-muted-foreground">/year</span>
+              </div>
             </div>
             <p className="mt-4 text-muted-foreground">
               Full access to BellaMD on all your devices.
