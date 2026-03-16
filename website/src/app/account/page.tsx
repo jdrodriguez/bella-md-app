@@ -6,6 +6,7 @@ import { db } from "@/db"
 import { licenses } from "@/db/schema"
 import { CopyButton } from "./copy-button"
 import { SignOutButton } from "./sign-out-button"
+import { DeactivateButton } from "./deactivate-button"
 
 export default async function AccountPage({
   searchParams,
@@ -22,9 +23,9 @@ export default async function AccountPage({
     with: { activations: true },
   })
 
-  const activeDevices = license?.activations?.filter(
-    (a) => a.deactivatedAt === null,
-  )
+  const activeDevices =
+    license?.activations?.filter((a) => a.deactivatedAt === null) ?? []
+  const maxDevices = license?.maxDevices ?? 3
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
@@ -51,11 +52,12 @@ export default async function AccountPage({
           Account
         </h1>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          {session.user.email}
+          {session.user.email ?? ""}
         </p>
 
         {license ? (
-          <div className="mt-8 space-y-6">
+          <div className="mt-8 space-y-8">
+            {/* License info */}
             <div className="rounded-lg border border-border bg-white p-6 shadow-sm dark:bg-zinc-900">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -98,19 +100,141 @@ export default async function AccountPage({
                     Devices
                   </dt>
                   <dd className="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
-                    {activeDevices?.length ?? 0} of {license.maxDevices ?? 3}{" "}
-                    used
+                    {activeDevices.length} of {maxDevices} used
                   </dd>
                 </div>
               </dl>
             </div>
 
-            <Link
-              href="/account/devices"
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
-            >
-              Manage devices
-            </Link>
+            {/* Devices */}
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+                Devices
+              </h2>
+
+              {activeDevices.length === 0 ? (
+                <div className="mt-4 rounded-lg border border-border bg-white p-6 text-center shadow-sm dark:bg-zinc-900">
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    No devices activated. Open BellaMD on a device and enter your
+                    license key to activate it.
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {/* Desktop table */}
+                  <div className="hidden overflow-hidden rounded-lg border border-border bg-white shadow-sm sm:block dark:bg-zinc-900">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-zinc-50 dark:bg-zinc-800/50">
+                          <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+                            Device
+                          </th>
+                          <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+                            OS
+                          </th>
+                          <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+                            Activated
+                          </th>
+                          <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+                            Last seen
+                          </th>
+                          <th className="px-4 py-3" />
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {activeDevices.map((device) => (
+                          <tr key={device.id}>
+                            <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                              {device.machineName || "Unknown device"}
+                            </td>
+                            <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                              {device.os || "Unknown"}
+                            </td>
+                            <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                              {device.activatedAt?.toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }) ?? "-"}
+                            </td>
+                            <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                              {device.lastHeartbeatAt?.toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              ) ?? "-"}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <DeactivateButton
+                                licenseKey={license.licenseKey}
+                                machineId={device.machineId}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile cards */}
+                  <div className="space-y-3 sm:hidden">
+                    {activeDevices.map((device) => (
+                      <div
+                        key={device.id}
+                        className="rounded-lg border border-border bg-white p-4 shadow-sm dark:bg-zinc-900"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                              {device.machineName || "Unknown device"}
+                            </p>
+                            <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                              {device.os || "Unknown OS"}
+                            </p>
+                          </div>
+                          <DeactivateButton
+                            licenseKey={license.licenseKey}
+                            machineId={device.machineId}
+                          />
+                        </div>
+                        <dl className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <dt className="text-zinc-500 dark:text-zinc-400">
+                              Activated
+                            </dt>
+                            <dd className="text-zinc-900 dark:text-zinc-100">
+                              {device.activatedAt?.toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }) ?? "-"}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt className="text-zinc-500 dark:text-zinc-400">
+                              Last seen
+                            </dt>
+                            <dd className="text-zinc-900 dark:text-zinc-100">
+                              {device.lastHeartbeatAt?.toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              ) ?? "-"}
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="mt-8 rounded-lg border border-border bg-white p-8 text-center shadow-sm dark:bg-zinc-900">
