@@ -5,6 +5,10 @@ import { db } from "@/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   providers: [
     Resend({
       from: "BellaMD <noreply@bellamarkdown.com>",
@@ -15,8 +19,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     verifyRequest: "/check-email",
   },
   callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    session({ session, token }) {
+      session.user.id = token.id as string
       return session
     },
   },
