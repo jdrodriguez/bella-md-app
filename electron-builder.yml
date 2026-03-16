@@ -5,6 +5,10 @@ directories:
 extraResources:
   - from: resources/icon.png
     to: icon.png
+asarUnpack:
+  - "**/*.node"
+  - "**/keytar/**"
+  - "**/node-machine-id/**"
 files:
   - '!**/.vscode/*'
   - '!src/*'
