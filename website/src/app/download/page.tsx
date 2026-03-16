@@ -22,7 +22,7 @@ const platforms = [
   {
     name: "Windows",
     href: `${RELEASE_BASE}/bella-md-1.0.0-x64-setup.exe`,
-    altHref: `${RELEASE_BASE}/bella-md-1.0.0-setup.exe`,
+    altHref: `${RELEASE_BASE}/bella-md-1.0.0-arm64-setup.exe`,
     altLabel: "ARM64",
     requirements: "Windows 10 or later",
     comingSoon: false,
