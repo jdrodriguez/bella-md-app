@@ -15,6 +15,20 @@ export const metadata: Metadata = {
     icon: "/icon.png",
     apple: "/apple-touch-icon.png",
   },
+  metadataBase: new URL("https://bellamarkdown.com"),
+  openGraph: {
+    title: "BellaMD — Beautiful Markdown Editing",
+    description:
+      "A distraction-free WYSIWYG Markdown editor for macOS, Windows, and Linux. $25/year.",
+    siteName: "BellaMD",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BellaMD — Beautiful Markdown Editing",
+    description:
+      "A distraction-free WYSIWYG Markdown editor for macOS, Windows, and Linux. $25/year.",
+  },
 };
 
 export default function RootLayout({
