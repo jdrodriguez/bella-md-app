@@ -28,8 +28,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Migration script — uses postgres driver already bundled in standalone
+# Migration script with its own postgres driver
 COPY --from=builder --chown=nextjs:nodejs /app/migrate.mjs ./migrate.mjs
+COPY --from=builder /app/node_modules/postgres ./node_modules/postgres
 
 USER nextjs
 EXPOSE 3000
