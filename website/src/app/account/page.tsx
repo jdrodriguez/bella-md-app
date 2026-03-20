@@ -262,6 +262,22 @@ export default async function AccountPage({
             </Link>
           </div>
         )}
+
+        {/* Affiliate Program */}
+        <div className="mt-8 rounded-xl border border-border bg-background p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground">
+            Earn with BellaMD
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Refer friends and earn 25% commission on every payment they make.
+          </p>
+          <Link
+            href="/affiliate"
+            className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+          >
+            Go to affiliate dashboard &rarr;
+          </Link>
+        </div>
       </main>
 
       <Footer />

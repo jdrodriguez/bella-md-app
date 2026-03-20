@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
+import { eq, and, isNull } from 'drizzle-orm'
 import { auth } from '@/lib/auth'
 import { getStripe } from '@/lib/stripe'
+import { db } from '@/db'
+import { affiliates } from '@/db/schema'
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -19,17 +23,48 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Read referral cookie and validate the affiliate
+  let referralCode: string | undefined
   try {
+    const cookieStore = await cookies()
+    const refCookie = cookieStore.get('bellamd_ref')
+
+    if (refCookie?.value) {
+      const [affiliate] = await db
+        .select()
+        .from(affiliates)
+        .where(
+          and(
+            eq(affiliates.code, refCookie.value),
+            eq(affiliates.status, 'active'),
+            isNull(affiliates.deletedAt),
+          ),
+        )
+        .limit(1)
+
+      // Validate affiliate exists, is active, and is not self-referral
+      if (affiliate && affiliate.userId !== session.user.id) {
+        referralCode = affiliate.code
+      }
+    }
+  } catch {
+    // If cookie reading or affiliate lookup fails, proceed without referral
+  }
+
+  try {
+    const metadata: Record<string, string> = {
+      userId: session.user.id,
+    }
+    if (referralCode) {
+      metadata.referralCode = referralCode
+    }
+
     const checkoutSession = await getStripe().checkout.sessions.create({
       mode: 'subscription',
       customer_email: session.user.email,
-      metadata: {
-        userId: session.user.id,
-      },
+      metadata,
       subscription_data: {
-        metadata: {
-          userId: session.user.id,
-        },
+        metadata,
       },
       line_items: [
         {
