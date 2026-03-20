@@ -28,15 +28,12 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Drizzle schema push — isolated in /migrate to avoid conflicts with standalone output
-COPY --from=builder --chown=nextjs:nodejs /app/src/db/schema.ts /migrate/src/db/schema.ts
-COPY --from=builder --chown=nextjs:nodejs /app/drizzle.config.ts /migrate/drizzle.config.ts
-COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json /migrate/tsconfig.json
-RUN cd /migrate && npm init -y > /dev/null 2>&1 && npm install drizzle-kit drizzle-orm postgres > /dev/null 2>&1
+# Migration script — uses postgres driver already bundled in standalone
+COPY --from=builder --chown=nextjs:nodejs /app/migrate.mjs ./migrate.mjs
 
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD cd /migrate && ./node_modules/.bin/drizzle-kit push --force && cd /app && node server.js
+CMD node migrate.mjs && node server.js
