@@ -2,19 +2,19 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { FaApple, FaWindows, FaLinux } from "react-icons/fa";
 
-const RELEASE_BASE = "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.1"
+const RELEASE_BASE = "https://github.com/jdrodriguez/bella-md-app/releases/download/v1.0.2"
 
 const platforms = [
   {
     name: "macOS",
-    href: `${RELEASE_BASE}/bella-md-1.0.1.dmg`,
+    href: `${RELEASE_BASE}/bella-md-1.0.2.dmg`,
     requirements: "macOS 12 Monterey or later (Apple Silicon)",
     comingSoon: false,
     icon: <FaApple className="h-10 w-10" />,
   },
   {
     name: "Windows",
-    href: `${RELEASE_BASE}/bella-md-1.0.1-setup.exe`,
+    href: `${RELEASE_BASE}/bella-md-1.0.2-setup.exe`,
     requirements: "Windows 10 or later",
     note: 'Windows may show a "Windows protected your PC" warning. Click "More info" then "Run anyway" to install.',
     comingSoon: false,
@@ -22,8 +22,8 @@ const platforms = [
   },
   {
     name: "Linux",
-    href: `${RELEASE_BASE}/bella-md-1.0.1-x86_64.AppImage`,
-    altHref: `${RELEASE_BASE}/bella-md-1.0.1-arm64.AppImage`,
+    href: `${RELEASE_BASE}/bella-md-1.0.2-x86_64.AppImage`,
+    altHref: `${RELEASE_BASE}/bella-md-1.0.2-arm64.AppImage`,
     altLabel: "ARM64",
     requirements: "Ubuntu 20.04+, Fedora 36+, or equivalent (AppImage)",
     comingSoon: false,
