@@ -202,6 +202,16 @@ export default function App() {
     return cleanup
   }, [openTab, addRecentFile])
 
+  // Check for a file that triggered app launch (before React was ready)
+  useEffect(() => {
+    window.api.getPendingFile().then((file: { filePath: string; content: string } | null) => {
+      if (file) {
+        openTab(file.filePath, file.content)
+        addRecentFile(file.filePath)
+      }
+    })
+  }, [openTab, addRecentFile])
+
   // Editor content update handler
   const handleEditorUpdate = useCallback(
     (markdown: string) => {

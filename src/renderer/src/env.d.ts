@@ -34,6 +34,7 @@ interface ElectronAPI {
   watchDirectory(dirPath: string): Promise<boolean>
   unwatchDirectory(dirPath: string): Promise<boolean>
   getRecentFiles(): Promise<string[]>
+  getPendingFile(): Promise<{ filePath: string; content: string } | null>
   showInFolder(filePath: string): void
   exportPDF(html: string, defaultPath?: string): Promise<boolean>
   exportHTML(content: string, defaultPath?: string): Promise<boolean>

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, MenuItem, nativeImage } from 'electron'
 import { join } from 'path'
 import fs from 'fs'
 import { is } from '@electron-toolkit/utils'
@@ -84,15 +84,6 @@ function createWindow(): BrowserWindow {
     mainWindow!.show()
   })
 
-  // Wait until renderer has fully loaded before sending any pending file
-  mainWindow.webContents.once('did-finish-load', () => {
-    if (pendingFilePath) {
-      const filePath = pendingFilePath
-      pendingFilePath = null
-      sendFileToRenderer(filePath)
-    }
-  })
-
   const savedLang = (loadPrefs().spellcheckLang as string) || 'en-US'
   const available = mainWindow.webContents.session.availableSpellCheckerLanguages
   const currentLang = available.includes(savedLang) ? savedLang : 'en-US'
@@ -167,6 +158,19 @@ function getFileFromArgs(argv: string[]): string | null {
   })
   return fileArg ?? null
 }
+
+// Renderer calls this after App mounts to collect any file that triggered the launch
+ipcMain.handle('get-pending-file', async () => {
+  if (!pendingFilePath) return null
+  const filePath = pendingFilePath
+  pendingFilePath = null
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf-8')
+    return { filePath, content }
+  } catch {
+    return null
+  }
+})
 
 app.whenReady().then(() => {
   setupIPC()

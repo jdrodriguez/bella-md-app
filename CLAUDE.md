@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 BellaMD is a monorepo containing:
 1. **Electron desktop app** — A WYSIWYG Markdown document editor built with React 18, Tiptap, and Zustand
 2. **Distribution website** (`website/`) — Next.js 16 site at bellamarkdown.com with Stripe subscriptions, license management, and an interactive editor demo
+3. **Mobile app** (`mobile/`) — Expo (React Native) app for iOS and Android. Tiptap editor runs in a WebView with a typed postMessage bridge. See `mobile/PLAN.md` for full implementation plan.
 
 ## Commands
 
@@ -38,6 +39,14 @@ npm run db:push          # Push Drizzle schema to Postgres
 npm run db:studio        # Open Drizzle Studio
 ```
 
+### Mobile App (mobile/)
+```bash
+cd mobile
+npm run prebuild:webview # Build Tiptap WebView bundle via Vite
+npm run dev              # Start Expo dev server (prebuild:webview runs first)
+npm run build            # EAS Build for production
+```
+
 ## Architecture
 
 ### Electron App — Three-process architecture
@@ -55,6 +64,32 @@ Main Process (src/main/)        Preload (src/preload/)        Renderer (src/rend
 - **Main process** (`src/main/index.ts`, `ipc.ts`, `menu.ts`, `license.ts`): Handles file system operations, window lifecycle, directory watching (debounced 500ms), exports, and license activation/validation. Preferences stored as JSON in `app.getPath('userData')/preferences.json`. License tokens stored in OS keychain via `keytar`.
 - **Preload** (`src/preload/index.ts`): Exposes a typed `window.api` object via `contextBridge`. The renderer never accesses Node/fs directly. Includes license IPC methods.
 - **Renderer** (`src/renderer/src/`): React app with a single Zustand store (`store.ts`). `App.tsx` orchestrates menu actions, file events, and editor sync. `LicenseGate` wraps the app to enforce activation.
+
+### Mobile App — Expo + WebView
+
+```
+mobile/
+  src/
+    app/                        # Expo Router (file-based routing)
+      (tabs)/index.tsx          # Document list
+      (tabs)/settings.tsx       # Settings
+      editor/[id].tsx           # Full-screen editor
+      license.tsx               # License activation modal
+    components/
+      EditorWebView.tsx         # WebView wrapper with postMessage bridge
+      MobileToolbar.tsx         # Native toolbar above keyboard
+      LicenseGate.tsx           # License check wrapper
+    lib/
+      bridge.ts                 # Typed postMessage protocol
+      license.ts                # License service (expo-secure-store + expo-application)
+      storage.ts                # Document CRUD (expo-file-system)
+    webview/                    # Vite-bundled Tiptap editor HTML
+```
+
+- **Editor approach**: Tiptap runs in a WebView, reusing the browser-compatible extensions from `website/src/components/demo/extensions.ts`
+- **Bridge**: Typed JSON messages over `postMessage`/`onMessage` for commands (FORMAT, SET_CONTENT) and events (CONTENT_CHANGED, SELECTION_CHANGED)
+- **Licensing**: Calls the same `bellamarkdown.com/api/license/` endpoints. Uses `expo-secure-store` (replaces `keytar`) and `expo-application` (replaces `node-machine-id`)
+- **Storage**: Documents as `.md` files in app document directory via `expo-file-system`. Soft deletes to `.trash/`
 
 ### Website — Next.js + Postgres + Auth.js
 
@@ -92,8 +127,8 @@ website/
 
 - **$25/year** subscription via Stripe Checkout
 - **3 devices max** per license key (format: `BLMD-XXXX-XXXX-XXXX-XXXX`)
-- **Machine fingerprinting** via `node-machine-id`
-- **Token storage** in OS keychain via `keytar`
+- **Machine fingerprinting** via `node-machine-id` (desktop) / `expo-application` (mobile)
+- **Token storage** in OS keychain via `keytar` (desktop) / `expo-secure-store` (mobile)
 - **Heartbeat**: App pings server every 7 days; 30-day offline grace period
 - **Activation flow**: User purchases → receives license key via email → enters in app → server validates + returns signed JWT → stored in keychain
 
@@ -121,6 +156,7 @@ Two separate configs referenced from the root `tsconfig.json`:
 
 - `@renderer` resolves to `src/renderer/src/` (Electron renderer)
 - `@/*` resolves to `website/src/*` (website)
+- `@/*` resolves to `mobile/src/*` (mobile — separate tsconfig)
 
 ## Component Structure
 
@@ -158,6 +194,7 @@ Two separate configs referenced from the root `tsconfig.json`:
 | DNS | Hostinger | `bellamarkdown.com` + `www` → Railway |
 | Downloads | GitHub Releases | v1.0.0 with macOS/Windows/Linux (x64 + ARM64) |
 | Code signing | Apple Developer | Team ID: R7JNG8KV57, notarized via electron-builder |
+| Mobile builds | EAS Build | Expo Application Services for iOS + Android |
 
 ## Environment Variables
 

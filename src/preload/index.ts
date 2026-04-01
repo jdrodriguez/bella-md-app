@@ -1,5 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+type FileOpenedListener = (filePath: string, content: string) => void
+
+const fileOpenedListeners = new Set<FileOpenedListener>()
+let pendingFileOpened: { filePath: string; content: string } | null = null
+
+ipcRenderer.on('file-opened', (_event, filePath: string, content: string) => {
+  if (fileOpenedListeners.size === 0) {
+    pendingFileOpened = { filePath, content }
+    return
+  }
+
+  for (const listener of fileOpenedListeners) {
+    listener(filePath, content)
+  }
+})
+
 contextBridge.exposeInMainWorld('api', {
   openFile: () => ipcRenderer.invoke('open-file'),
   openFolder: () => ipcRenderer.invoke('open-folder'),
@@ -29,11 +45,22 @@ contextBridge.exposeInMainWorld('api', {
     return () => ipcRenderer.removeListener('menu-action', handler)
   },
   onFileOpened: (callback: (filePath: string, content: string) => void) => {
-    const handler = (_event: unknown, filePath: string, content: string): void =>
-      callback(filePath, content)
-    ipcRenderer.on('file-opened', handler)
-    return () => ipcRenderer.removeListener('file-opened', handler)
+    fileOpenedListeners.add(callback)
+
+    if (pendingFileOpened) {
+      const { filePath, content } = pendingFileOpened
+      pendingFileOpened = null
+
+      queueMicrotask(() => {
+        if (fileOpenedListeners.has(callback)) {
+          callback(filePath, content)
+        }
+      })
+    }
+
+    return () => fileOpenedListeners.delete(callback)
   },
+  getPendingFile: () => ipcRenderer.invoke('get-pending-file'),
   onDirectoryChanged: (callback: (dirPath: string) => void) => {
     const handler = (_event: unknown, dirPath: string): void => callback(dirPath)
     ipcRenderer.on('directory-changed', handler)
