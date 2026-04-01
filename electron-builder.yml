@@ -19,15 +19,12 @@ fileAssociations:
   - ext: md
     name: Markdown Document
     role: Editor
-    icon: build/icon.icns
   - ext: markdown
     name: Markdown Document
     role: Editor
-    icon: build/icon.icns
   - ext: txt
     name: Text Document
     role: Editor
-    icon: build/icon.icns
 mac:
   identity: "Josue Rodriguez (R7JNG8KV57)"
   hardenedRuntime: true
