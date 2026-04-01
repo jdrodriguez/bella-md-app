@@ -8,6 +8,31 @@ import { setupIPC } from './ipc'
 let mainWindow: BrowserWindow | null = null
 let pendingFilePath: string | null = null
 
+// macOS: open-file can fire before app.whenReady(), so register early
+app.on('open-file', (event, filePath) => {
+  event.preventDefault()
+
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    sendFileToRenderer(filePath)
+  } else {
+    pendingFilePath = filePath
+  }
+})
+
+function sendFileToRenderer(filePath: string): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return
+  fs.promises
+    .readFile(filePath, 'utf-8')
+    .then((content) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('file-opened', filePath, content)
+      }
+    })
+    .catch(() => {
+      // File could not be read
+    })
+}
+
 const prefsPath = (): string => join(app.getPath('userData'), 'preferences.json')
 
 function loadPrefs(): Record<string, unknown> {
@@ -57,19 +82,14 @@ function createWindow(): BrowserWindow {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow!.show()
+  })
 
-    // Open any file that was double-clicked before the window was ready
+  // Wait until renderer has fully loaded before sending any pending file
+  mainWindow.webContents.once('did-finish-load', () => {
     if (pendingFilePath) {
       const filePath = pendingFilePath
       pendingFilePath = null
-      fs.promises
-        .readFile(filePath, 'utf-8')
-        .then((content) => {
-          mainWindow!.webContents.send('file-opened', filePath, content)
-        })
-        .catch(() => {
-          // File could not be read
-        })
+      sendFileToRenderer(filePath)
     }
   })
 
@@ -168,16 +188,7 @@ app.whenReady().then(() => {
 
       const filePath = getFileFromArgs(argv)
       if (filePath) {
-        fs.promises
-          .readFile(filePath, 'utf-8')
-          .then((content) => {
-            if (mainWindow && !mainWindow.isDestroyed()) {
-              mainWindow.webContents.send('file-opened', filePath, content)
-            }
-          })
-          .catch(() => {
-            // File could not be read
-          })
+        sendFileToRenderer(filePath)
       }
     }
   })
@@ -187,26 +198,6 @@ app.whenReady().then(() => {
       createWindow()
     }
   })
-})
-
-app.on('open-file', (event, filePath) => {
-  event.preventDefault()
-
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    fs.promises
-      .readFile(filePath, 'utf-8')
-      .then((content) => {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('file-opened', filePath, content)
-        }
-      })
-      .catch(() => {
-        // File could not be read
-      })
-  } else {
-    // App launched by double-clicking a file — window not ready yet
-    pendingFilePath = filePath
-  }
 })
 
 app.on('window-all-closed', () => {
